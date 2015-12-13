@@ -242,9 +242,13 @@ class DatabaseCache(object):
                'WHERE num_type = ? AND country_code = ? '
                'ORDER BY start_hex')
         self.cursor.execute(sql, (num_type, country_code))
+        last = ()
         result = []
         for row in self.cursor:
-            result.append((long(row[0], 16), long(row[1], 16) - 1))
+            current = (long(row[0], 16), long(row[1], 16) - 1)
+            if last != current:
+                result.append(current)
+            last = current
         return result
 
     def fetch_country_code(self, num_type, source_type, lookup_num):
